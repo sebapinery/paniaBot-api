@@ -4,7 +4,7 @@ const reservaMesaSchema = new Schema({
   name: { type: String, required: true },
   phone: { type: Number, required: true },
   qty: { type: Number, required: true },
-  dateOfAppointment: { type: Date, required: true },
+  dateOfAppointment: { type: String, required: true },
   typeAmenitie: { type: String, required: true },
   time: { type: String, required: true },
   qtyKids: { type: Number },
