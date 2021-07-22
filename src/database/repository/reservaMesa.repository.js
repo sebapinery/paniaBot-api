@@ -1,5 +1,6 @@
 import ReservaMesa from "../../models/reservaMesa.model";
 import Salon from "../../models/salon.model";
+import { Schema, Types } from "mongoose";
 
 export const getAllReservas = () => {
   return ReservaMesa.find();
@@ -12,23 +13,38 @@ export const createReservation = async (body) => {
     dateOfAppointment: dateExist._id,
   });
 
-  const count = await ReservaMesa.aggregate([
+  const countReservas = await ReservaMesa.aggregate([
     {
       $group: {
-        _id: null, 
+        _id: null,
         total: { $sum: "$qty" },
       },
     },
-  ])
-  await Salon.findByIdAndUpdate(dateExist._id, { vacantes: dateExist.maxVacantes - count[0].total }, )
-
+  ]);
+  await Salon.findByIdAndUpdate(dateExist._id, {
+    vacantes: dateExist.maxVacantes - countReservas[0].total,
+  });
 
   return newReserva;
 };
 
 export const getOneReserva = async (id) => {
-  const reservaFound = await ReservaMesa.findById(id);
-  return reservaFound;
+  // const reservaFound = await ReservaMesa.findById(id);
+  const agregation = await ReservaMesa.aggregate([
+    {
+      $match: { _id: new Types.ObjectId(id) }
+    },
+    {
+      $lookup: {
+        from: 'salons',
+        localField: 'dateOfAppointment',
+        foreignField: '_id',
+        as: 'infoDiaReserva'
+      }
+    }
+  ]);
+
+  return agregation;
 };
 
 export const deleteReserva = async (id) => {

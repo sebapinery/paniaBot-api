@@ -1,5 +1,5 @@
 import Salon from "../../models/salon.model";
-import { Schema } from "mongoose";
+import { Schema, Types } from "mongoose";
 
 export const getAllSalons = () => {
   return Salon.find();
@@ -11,8 +11,21 @@ export const createSalon = async (body) => {
 };
 
 export const getOneSalon = async (id) => {
-  const salonFound = await Salon.findById(id);
-  return salonFound;
+  const agregation = await Salon.aggregate([
+    {
+      $match: { _id: new Types.ObjectId(id) }
+    },
+    {
+      $lookup: {
+        from: 'reservamesas',
+        localField: '_id',
+        foreignField: 'dateOfAppointment',
+        as: 'reservasDelDia'
+      }
+    }
+  ]);
+
+  return agregation;
 };
 
 export const availabilityCheck = async (date, qty) => {
