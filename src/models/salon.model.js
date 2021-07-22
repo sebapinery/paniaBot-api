@@ -6,7 +6,7 @@ const salonSchema = new Schema({
   vacantes: { type: Number, required: true }, // 24
   maxVacantes: { type: Number, required: true }, // 30 
   date: { type: Date, required: true}, //
-  estado: { type: Boolean, required: true } //
+  estado: { type: Boolean, required: true } // TRUE = DISPONIBLE && FALE = NO DISPONIBLE
 });
 
 const Salon = model("Salon", salonSchema);

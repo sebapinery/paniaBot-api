@@ -7,7 +7,7 @@ const reservaMesaSchema = new Schema({
   facebook: { type: String }, // Nicolas Pinery
   email: { type: Number }, // nicopinery@gmail.com
   qty: { type: Number, required: true }, // 4
-  dateOfAppointment: { type: String, required: true }, // 23/07/2021
+  dateOfAppointment: { type: Schema.Types.ObjectId, required: true }, // 23/07/2021
   typeAmenitie: { type: String, required: true }, // merienda
   time: { type: String, required: true }, // 14hrs
   qtyKids: { type: Number }, // 0

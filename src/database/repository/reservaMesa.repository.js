@@ -1,11 +1,14 @@
 import ReservaMesa from "../../models/reservaMesa.model";
+import Salon from "../../models/salon.model";
 
 export const getAllReservas = () => {
   return ReservaMesa.find();
 };
 
 export const createReservation = async (body) => {
-  const newReserva = await ReservaMesa.create(body);
+  const dateExist = await Salon.findOne({ date: { $eq: body.date } });
+
+  const newReserva = await ReservaMesa.create({...body, dateOfAppointment: dateExist._id});
   return newReserva;
 };
 

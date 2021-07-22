@@ -20,7 +20,6 @@ export const getAllReservasController = async (_, res) => {
 export const createReservaMesa = async (req, res) => {
   try {
     const createdReserva = await createReservation(req.body);
-    
     res.status(201).json(createdReserva);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -52,6 +51,5 @@ export const updateReservaController = async (req, res) => {
     res.status(200).json(updatedReserva)
   } catch (error) {
     res.status(500).json({ error: error.message });
-    
   }
 }

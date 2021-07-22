@@ -7,6 +7,7 @@ import { dbConnection } from "./database/index";
 
 // IMPORT ROUTES
 import reservaMesaRouter from "./routes/reservaMesa.routes";
+import salonRouter from "./routes/salon.routes";
 
 const app = express();
 dotenv.config();
@@ -16,7 +17,12 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+//////////////////
+///// ROUTES /////
+//////////////////
 app.use("/reservas", reservaMesaRouter);
+app.use("/salon", salonRouter);
+
 
 // ERROR HANDLER
 app.use(async (_, res, next) => {
