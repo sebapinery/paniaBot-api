@@ -19,11 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/reservas", reservaMesaRouter);
 
 // ERROR HANDLER
-app.use(async (req, res, next) => {
+app.use(async (_, res, next) => {
   next(createError.NotFound("Path not found"));
 });
 
-app.use((err, req, res, next) => {
+app.use((err, _, res, next) => {
   res.status(err.status || 500);
   res.send({
     error: {
@@ -36,7 +36,7 @@ app.use((err, req, res, next) => {
 // SERVER START
 app.listen(port, () => {
   try {
-    console.log(`Server running on port ${port} 🚀`);
+    console.log(`🚀 Server running on port ${port} `);
     dbConnection();
   } catch (error) {
     console.log(error.message);

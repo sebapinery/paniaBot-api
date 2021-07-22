@@ -18,3 +18,11 @@ export const deleteReserva = async (id) => {
   const deleted = await ReservaMesa.findByIdAndDelete(id);
   return deleted;
 };
+
+export const updateReserva = async (id, bodyToUpdate) => {
+  const updated = await ReservaMesa.findByIdAndUpdate(id, bodyToUpdate, (err, res) => {
+    if(err) throw new Error(err)
+  });
+
+  return updated;
+};

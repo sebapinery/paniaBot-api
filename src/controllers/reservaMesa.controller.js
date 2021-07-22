@@ -2,7 +2,8 @@ import {
   getAllReservas,
   createReservation,
   getOneReserva,
-  deleteReserva
+  deleteReserva,
+  updateReserva
 } from "../database/repository/reservaMesa.repository";
 
 
@@ -43,3 +44,14 @@ export const deleteReservaByIdController = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const updateReservaController = async (req, res) => {
+  const { params, body } = req;
+  try {
+    const updatedReserva = await updateReserva(params.id, body);
+    res.status(200).json(updatedReserva)
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    
+  }
+}
