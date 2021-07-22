@@ -11,6 +11,7 @@ export const dbConnection = () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: false
       },
       () => {
         console.log(`🌱 MongoDb is connected on URI ${uri}/${dbName}`);

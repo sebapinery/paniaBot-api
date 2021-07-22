@@ -7,8 +7,22 @@ export const getAllReservas = () => {
 
 export const createReservation = async (body) => {
   const dateExist = await Salon.findOne({ date: { $eq: body.date } });
+  const newReserva = await ReservaMesa.create({
+    ...body,
+    dateOfAppointment: dateExist._id,
+  });
 
-  const newReserva = await ReservaMesa.create({...body, dateOfAppointment: dateExist._id});
+  const count = await ReservaMesa.aggregate([
+    {
+      $group: {
+        _id: null, 
+        total: { $sum: "$qty" },
+      },
+    },
+  ])
+  await Salon.findByIdAndUpdate(dateExist._id, { vacantes: dateExist.maxVacantes - count[0].total }, )
+
+
   return newReserva;
 };
 
@@ -23,9 +37,13 @@ export const deleteReserva = async (id) => {
 };
 
 export const updateReserva = async (id, bodyToUpdate) => {
-  const updated = await ReservaMesa.findByIdAndUpdate(id, bodyToUpdate, (err, res) => {
-    if(err) throw new Error(err)
-  });
+  const updated = await ReservaMesa.findByIdAndUpdate(
+    id,
+    bodyToUpdate,
+    (err, res) => {
+      if (err) throw new Error(err);
+    }
+  );
 
   return updated;
 };
