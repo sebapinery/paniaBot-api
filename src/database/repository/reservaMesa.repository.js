@@ -21,9 +21,7 @@ export const createReservation = async (body) => {
       },
     },
   ]);
-  await Salon.findByIdAndUpdate(dateExist._id, {
-    vacantes: dateExist.maxVacantes - countReservas[0].total,
-  });
+
 
   return newReserva;
 };

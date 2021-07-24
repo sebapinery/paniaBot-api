@@ -13,31 +13,65 @@ export const createSalon = async (body) => {
 export const getOneSalon = async (id) => {
   const agregation = await Salon.aggregate([
     {
-      $match: { _id: new Types.ObjectId(id) }
+      $match: { _id: new Types.ObjectId(id) },
     },
     {
       $lookup: {
-        from: 'reservamesas',
-        localField: '_id',
-        foreignField: 'dateOfAppointment',
-        as: 'reservasDelDia'
-      }
-    }
+        from: "reservamesas",
+        localField: "_id",
+        foreignField: "dateOfAppointment",
+        as: "reservasDelDia",
+      },
+    },
+    {
+      $addFields: {
+        totalComensales: { $sum: "$reservasDelDia.qty" },
+        totalReservas: { $size: "$reservasDelDia" },
+        disponibilidad: {
+          $subtract: ["$maxVacantes", { $sum: "$reservasDelDia.qty" }],
+        },
+      },
+    },
   ]);
+
+  // console.log(agregation[0].totalComensales);
 
   return agregation;
 };
 
 export const availabilityCheck = async (date, qty) => {
-  const dateExist = await Salon.findOne({ date: { $eq: date } });
-  if (!dateExist) return false 
-  if(dateExist.maxVacantes < qty) return false
-  if(dateExist.vacantes <= 1) return false
-  if(dateExist.vacantes < qty) return false
-  if(dateExist.vacantes <= dateExist.maxVacantes) return true
-  else return false
+  const { _id, maxVacantes } = await Salon.findOne({ date: { $eq: date } });
+  if (!_id) return false; // EL DIA NO ESTA CREADO
+  if (maxVacantes < qty) return false; // LA CANT SOLICITADA ES MAYOR AL MAX DE CAPACIDAD
 
-  // return dateExist;
+  const agregation = await Salon.aggregate([
+    {
+      $match: { _id: new Types.ObjectId(_id) },
+    },
+    {
+      $lookup: {
+        from: "reservamesas",
+        localField: "_id",
+        foreignField: "dateOfAppointment",
+        as: "reservasDelDia",
+      },
+    },
+    {
+      $addFields: {
+        totalComensales: { $sum: "$reservasDelDia.qty" },
+        totalReservas: { $size: "$reservasDelDia" },
+        disponibilidad: {
+          $subtract: ["$maxVacantes", { $sum: "$reservasDelDia.qty" }],
+        },
+      },
+    },
+  ]);
+
+  const disponibilidad = agregation[0].disponibilidad;
+  if (disponibilidad < 2) return false; // MENOS DE 2 LUGARES RETURN FALSE
+  else if (disponibilidad < qty) return false;
+  else return true;
+
 };
 
 export const deleteSalon = async (id) => {
