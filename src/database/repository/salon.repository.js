@@ -34,7 +34,6 @@ export const getOneSalon = async (id) => {
     },
   ]);
 
-  // console.log(agregation[0].totalComensales);
 
   return agregation;
 };
